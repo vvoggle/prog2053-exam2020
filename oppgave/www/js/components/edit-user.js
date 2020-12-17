@@ -12,6 +12,7 @@ class EditUser extends LitElement {
   }
   /*
   / user uid is entered in the form due to its requirement in updateUser.php (f.ex. line 26)
+  / All inputs have an ID to which the php file will refer to. 
   */
   render() {
     return html`
@@ -25,7 +26,7 @@ class EditUser extends LitElement {
         <label for="lastName">Etternavn</label>
           <input type="text" name="lastName" id="lastName" value="${this.user.lastName}"><br>
         <label for="oldpwd">Gamle passord</label>
-          <input type="password" name="oldpwd" id="oldpwd"><br>
+          <input type="password" name="oldpwd" id="oldPwd"><br>
         <label for="nupwd">Nytt passord</label>
           <input type="password" name="nupwd" id="pwd"><br> 
         <button @click="${this.updUser}type="submit">Oppdater</button>
@@ -35,12 +36,19 @@ class EditUser extends LitElement {
   }
 
   updUser(inp){
-      console.log(inp);
+      const nuForm = new data(inp.target.form);
+      console.log(inp);                 //show form info in console
       fetch('api/updateUser.php', {    //send data to updateUser
         method: 'POST',
-        body: inp.target.form         //target form is the form
+        body: nuForm   //body is the form within the render
+      }).then(res=>res.json())
+        .then(data=>{                 // error check
+          if (data.status=='success') {
+            console.log("update complete.");
+        } else {
+            console.log("Update incomplete.");
+        }
       })
-      
   }
 }
 customElements.define('edit-user', EditUser);
